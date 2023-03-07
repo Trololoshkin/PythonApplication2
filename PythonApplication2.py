@@ -61,6 +61,22 @@ if position is not None:
     print(f'Opening {position} position at price {order_price} with quantity {order_quantity}')
 
 # Закрытие позиции
-if position == 'LONG' and data[-1, 0] >= order_price:
-    profit = order_quantity * (data[-1, 0] - order_price)
-    print(f'Closing LONG position at
+if position == 'LONG':
+    stop_loss_price = order_price - stop_loss * order_price
+    target_price = order_price + take_profit * order_price
+    if data[-1, 0] >= target_price or data[-1, 0] <= stop_loss_price:
+        close_price = data[-1, 0]
+        close_quantity = order_quantity
+        print(f'Closing LONG position at price {close_price} with quantity {close_quantity}')
+        profit = close_quantity * (close_price - order_price)
+        position = None
+
+if position == 'SHORT':
+    stop_loss_price = order_price + stop_loss * order_price
+    target_price = order_price - take_profit * order_price
+    if data[-1, 0] <= target_price or data[-1, 0] >= stop_loss_price:
+        close_price = data[-1, 0]
+        close_quantity = order_quantity
+        print(f'Closing SHORT position at price {close_price} with quantity {close_quantity}')
+        profit = order_quantity * (order_price - close_price)
+        position = None
